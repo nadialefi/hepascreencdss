@@ -11,9 +11,7 @@ app = FastAPI(title=settings.PROJECT_NAME)
 
 # Setup CORS
 origins = [
-    "http://localhost",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "*"
 ]
 
 app.add_middleware(
