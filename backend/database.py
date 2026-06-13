@@ -3,15 +3,22 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 import os
 
-# Base directory points to d:\hepatitis_app (one level above backend/)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DB_PATH = os.path.join(BASE_DIR, "hepatitis_app.db")
-
-SQLALCHEMY_DATABASE_URL = f"sqlite:///{DB_PATH}"
-
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+# Read database URL from environment variable, default to Supabase PostgreSQL pooler URL
+SQLALCHEMY_DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql://postgres.ivhlkxdgasrxabpxnmwb:CDSSapklefi1@aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres"
 )
+
+# Connect arguments check_same_thread is only for SQLite
+if SQLALCHEMY_DATABASE_URL.startswith("sqlite"):
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+    )
+else:
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL
+    )
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
